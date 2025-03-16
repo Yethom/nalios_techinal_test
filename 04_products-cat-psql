@@ -1,0 +1,36 @@
+// Write pseudo-SQL statements to create database tables to store the products of a basic
+webshop. Each product has a name, a price, a creation date and may belong to several
+categories. Categories have a name and a flag to indicate whether the category is
+private or public //
+
+
+// products
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    price float,
+    dateCreation date
+)
+
+// categories
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name varchar(255) NOT NULL,
+    isPrivate boolean (default false)
+)
+
+// link between products and categories
+CREATE TABLE products_categories (
+    product_id INT NOT NULL,
+    category_id INT NOT NULL,
+    PRIMARY KEY (product_id, category_id),
+)
+
+// query to get a list of products that belong to more than 5 public categories
+SELECT p.id, p.name, p.price, p.dateCreation
+FROM products p
+JOIN products_categories pc ON p.id = pc.product_id
+JOIN categories c ON pc.category_id = c.id
+WHERE c.isPrivate = false
+GROUP BY p.id
+HAVING COUNT(DISTINCT c.id) > 5
